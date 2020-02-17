@@ -2,42 +2,46 @@ import React, { Component } from 'react';
 
 import styled from 'styled-components';
 import Weather from '../components/Weather';
+import axios from 'axios';
 
 class WeatherForecast extends Component {
   state = {
-    forecasts: [
-      {
-        day: 'Mon',
-        icon: 'http://openweathermap.org/img/wn/10d@2x.png',
-        minTemp: 30,
-        maxTemp: 35
-      },
-      {
-        day: 'Tues',
-        icon: 'http://openweathermap.org/img/wn/11d@2x.png',
-        minTemp: 30,
-        maxTemp: 35
-      },
-      {
-        day: 'Wed',
-        icon: 'http://openweathermap.org/img/wn/09d@2x.png',
-        minTemp: 30,
-        maxTemp: 35
-      },
-      {
-        day: 'Thurs',
-        icon: 'http://openweathermap.org/img/wn/13d@2x.png',
-        minTemp: 30,
-        maxTemp: 35
-      },
-      {
-        day: 'Fri',
-        icon: 'http://openweathermap.org/img/wn/10d@2x.png',
-        minTemp: 30,
-        maxTemp: 35
-      }
-    ]
+    forecasts: []
   };
+
+  componentDidMount() {
+    axios
+      .get(
+        'https://api.openweathermap.org/data/2.5/forecast?q=Manila&units=metric&cnt=33&appid=038749864f8b0cbec6ce7239f252273f'
+      )
+      .then(response => {
+        const newWeatherForecasts = [];
+        let dayCount = 0;
+
+        while (dayCount < 5) {
+          let index = dayCount * 8;
+          newWeatherForecasts.push(
+            this.mapWeatherForecaseResponse(response.data.list[index])
+          );
+
+          dayCount++;
+        }
+
+        this.setState({
+          forecasts: newWeatherForecasts
+        });
+      })
+      .catch(error => console.log(error));
+  }
+
+  mapWeatherForecaseResponse(forecast) {
+    return {
+      day: new Date(forecast.dt * 1000).getDay(), //convert to milliseconds
+      icon: `http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`,
+      minTemp: forecast.main.temp_min,
+      maxTemp: forecast.main.temp_max
+    };
+  }
 
   render() {
     return (

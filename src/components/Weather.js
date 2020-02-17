@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 
+var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
+
 export default function Weather({ day, icon, minTemp, maxTemp }) {
   return (
     <Container>
-      <Day>{day}</Day>
+      <Day>{DAYS[day]}</Day>
       <Icon src={icon} />
       <TemperatureRange>
         <MaxTemperature>{minTemp} &deg;</MaxTemperature>
@@ -17,7 +19,7 @@ export default function Weather({ day, icon, minTemp, maxTemp }) {
 }
 
 Weather.propTypes = {
-  day: PropTypes.string.isRequired,
+  day: PropTypes.number.isRequired,
   icon: PropTypes.string.isRequired,
   minTemp: PropTypes.number.isRequired,
   maxTemp: PropTypes.number.isRequired
