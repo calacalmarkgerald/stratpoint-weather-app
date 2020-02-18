@@ -4,9 +4,9 @@ import rootReducer from './reducers';
 import { watchAll } from './sagas';
 
 const composeEnhancers =
-  process.env.NODE_ENV === 'development'
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    : null || compose;
+  (typeof window !== 'undefined' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
 const sagaMiddleware = createSagaMiddleware();
 
