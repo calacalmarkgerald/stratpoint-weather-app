@@ -4,10 +4,19 @@ import axios from 'axios';
 import { getFormattedDate, getFormattedTime } from '../../utils/utils';
 import * as actionTypes from '../actions/actionTypes';
 
-export function* fetchWeatherForecastsSaga() {
+const WEATHER_API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+const WEATHER_API_ICON_URL = 'http://openweathermap.org/img/wn/';
+const APP_ID = '038749864f8b0cbec6ce7239f252273f';
+
+export function* fetchWeatherForecastsSaga(
+  action,
+  city = 'Manila',
+  units = 'metric',
+  cnt = 40
+) {
   try {
     const response = yield axios.get(
-      'https://api.openweathermap.org/data/2.5/forecast?q=Manila&units=metric&cnt=33&appid=038749864f8b0cbec6ce7239f252273f'
+      `${WEATHER_API_URL}?q=${city}&units=${units}&cnt=${cnt}&appid=${APP_ID}`
     );
 
     console.log(response);
@@ -46,7 +55,7 @@ export function* fetchWeatherForecastsSaga() {
 function mapWeatherForecastResponse(forecast) {
   return {
     day: new Date(forecast.dt * 1000).getDay(), //convert to milliseconds
-    icon: `http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`,
+    icon: `${WEATHER_API_ICON_URL}/${forecast.weather[0].icon}@2x.png`,
     minTemp: forecast.main.temp_min,
     maxTemp: forecast.main.temp_max
   };

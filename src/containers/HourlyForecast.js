@@ -69,9 +69,9 @@ export default connect(mapStateToProps)(DailyForecast);
 
 const Container = styled.div`
   position: relative;
-  top: -100px;
   max-width: 1000px;
-  min-width: 600px;
+  min-width: 800px;
+  padding: 20px;
   color: #fdfbfc;
 `;
 
@@ -106,8 +106,8 @@ const BackButton = styled.button`
   position: absolute;
   margin: 10px 40px;
   padding: 10px 30px;
-  top: -80px;
-  left: 30px;
+  top: 0px;
+  left: 0px;
   background-color: #ec6e4c;
   color: #fdfbfc;
   border: none;
