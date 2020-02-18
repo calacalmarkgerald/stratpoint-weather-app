@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import { Switch, Route, Redirect } from 'react-router';
+
 import WeatherForecast from './containers/WeatherForecast';
+import HourlyForecast from './containers/HourlyForecast';
 
 function App() {
   return (
-    <div className='App'>
-      <WeatherForecast />
-    </div>
+    <Fragment>
+      <Switch>
+        <Route path='/daily' component={HourlyForecast} />
+        <Route path='/' component={WeatherForecast} />
+        <Redirect to='/' />
+      </Switch>
+    </Fragment>
   );
 }
 

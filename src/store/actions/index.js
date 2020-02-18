@@ -1,0 +1,1 @@
+export { fetchWeatherForecasts } from './weatherForecastAction';

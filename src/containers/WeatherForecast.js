@@ -1,80 +1,81 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import styled from 'styled-components';
+import * as actions from '../store/actions';
 import Weather from '../components/Weather';
-import axios from 'axios';
+import Spinner from '../components/Spinner';
 
 class WeatherForecast extends Component {
-  state = {
-    forecasts: []
-  };
-
   componentDidMount() {
-    axios
-      .get(
-        'https://api.openweathermap.org/data/2.5/forecast?q=Manila&units=metric&cnt=33&appid=038749864f8b0cbec6ce7239f252273f'
-      )
-      .then(response => {
-        const newWeatherForecasts = [];
-        let dayCount = 0;
-
-        while (dayCount < 5) {
-          let index = dayCount * 8;
-          newWeatherForecasts.push(
-            this.mapWeatherForecaseResponse(response.data.list[index])
-          );
-
-          dayCount++;
-        }
-
-        this.setState({
-          forecasts: newWeatherForecasts
-        });
-      })
-      .catch(error => console.log(error));
+    this.props.fetchWeatherForecasts();
   }
 
-  mapWeatherForecaseResponse(forecast) {
-    return {
-      day: new Date(forecast.dt * 1000).getDay(), //convert to milliseconds
-      icon: `http://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`,
-      minTemp: forecast.main.temp_min,
-      maxTemp: forecast.main.temp_max
-    };
-  }
+  onClickHandler = date => {
+    this.props.history.push({
+      pathname: '/daily',
+      search: `?date=${date}`
+    });
+  };
 
   render() {
     return (
       <Container>
         <Header>Weather Forecast</Header>
-        <WeatherContainer>
-          {this.state.forecasts.map((forecast, index) => (
-            <Weather
-              key={index}
-              day={forecast.day}
-              icon={forecast.icon}
-              minTemp={forecast.minTemp}
-              maxTemp={forecast.maxTemp}
-            />
-          ))}
-        </WeatherContainer>
+        {this.props.loading || this.props.forecasts === null ? (
+          <SpinnerContainer>
+            <Spinner />
+          </SpinnerContainer>
+        ) : (
+          <WeatherContainer>
+            {Object.keys(this.props.forecasts).map(key => (
+              <Weather
+                key={key}
+                day={this.props.forecasts[key].day}
+                icon={this.props.forecasts[key].icon}
+                minTemp={this.props.forecasts[key].minTemp}
+                maxTemp={this.props.forecasts[key].maxTemp}
+                onClick={() => this.onClickHandler(key)}
+              />
+            ))}
+          </WeatherContainer>
+        )}
       </Container>
     );
   }
 }
 
-export default WeatherForecast;
+const mapStateToProps = state => ({
+  loading: state.weatherForecast.loading,
+  forecasts: state.weatherForecast.forecasts,
+  error: state.weatherForecast.error
+});
+
+export default connect(mapStateToProps, {
+  fetchWeatherForecasts: actions.fetchWeatherForecasts
+})(WeatherForecast);
 
 const Container = styled.div`
-  padding: 20px;
+  position: relative;
+  top: -100px;
+  max-width: 1000px;
 `;
 
-const WeatherContainer = styled.div`
+const SpinnerContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
 
+const WeatherContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
 const Header = styled.h1`
-  color: #333;
+  color: #fdfbfc;
+  font-size: 48px;
   text-align: center;
+  line-height: 1.2;
+  font-weight: 400;
 `;

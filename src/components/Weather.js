@@ -5,10 +5,19 @@ import styled from 'styled-components';
 
 var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
 
-export default function Weather({ day, icon, minTemp, maxTemp }) {
+export default function Weather({
+  mode,
+  day,
+  time,
+  icon,
+  minTemp,
+  maxTemp,
+  onClick
+}) {
   return (
-    <Container>
-      <Day>{DAYS[day]}</Day>
+    <Container onClick={onClick}>
+      {mode === 'HOURLY' ? <Time>{time}</Time> : <Day>{DAYS[day]}</Day>}
+
       <Icon src={icon} />
       <TemperatureRange>
         <MaxTemperature>{minTemp} &deg;</MaxTemperature>
@@ -19,10 +28,17 @@ export default function Weather({ day, icon, minTemp, maxTemp }) {
 }
 
 Weather.propTypes = {
+  mode: PropTypes.string.isRequired,
   day: PropTypes.number.isRequired,
+  time: PropTypes.string,
   icon: PropTypes.string.isRequired,
   minTemp: PropTypes.number.isRequired,
-  maxTemp: PropTypes.number.isRequired
+  maxTemp: PropTypes.number.isRequired,
+  onClick: PropTypes.func
+};
+
+Weather.defaultProps = {
+  mode: 'DEFAULT'
 };
 
 const Container = styled.div`
@@ -31,12 +47,19 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: #fdfbfc;
+  border: 1px transparent solid;
+  transition: background-color 0.5s ease;
 
   &:hover {
-    border: 1px #ccc solid;
+    background-color: #f2994a;
     cursor: pointer;
   }
+`;
+
+const Time = styled.span`
+  display: inline-block;
+  padding: 5px;
 `;
 
 const Day = styled.span`
